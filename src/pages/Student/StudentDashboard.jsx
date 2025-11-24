@@ -6,36 +6,52 @@ export default function StudentDashboard() {
   const { user, logout } = useContext(AuthContext);
 
   const [meetingPending, setMeetingPending] = useState(false);
-  const [unread, setUnread] = useState(0); // 🔴 unread messages count
+  const [messageCount, setMessageCount] = useState(0);
 
   useEffect(() => {
     if (!user) return;
 
-    /* ---------------------------- MEETING STATUS ---------------------------- */
+    // ---------- CHECK MEETING STATUS (NEW SYSTEM) ----------
+    const logs = JSON.parse(localStorage.getItem("meetingLogs") || "[]");
+
+    // get approved meetings for THIS student
+    const approved = logs.filter(
+      (m) =>
+        m.studentEmail === user.email &&
+        m.status === "approved"
+    );
+
     const now = new Date();
     const month = now.getMonth();
     const year = now.getFullYear();
 
-    const meetings = JSON.parse(
-      localStorage.getItem(`studentMeetings_${user.email}`) || "[]"
-    );
-
-    const hasMet = meetings.some((m) => {
+    const metThisMonth = approved.some((m) => {
       const d = new Date(m.date);
       return d.getMonth() === month && d.getFullYear() === year;
     });
 
-    setMeetingPending(!hasMet);
+    setMeetingPending(!metThisMonth);
 
-    /* ------------------------ UNREAD MESSAGE COUNTER ------------------------ */
-    const unreadCount = parseInt(
-      localStorage.getItem(`unread_${user.email}`) || "0"
-    );
-    setUnread(unreadCount);
+    // ---------- CHECK MESSAGE COUNT ----------
+    const all = JSON.parse(localStorage.getItem("studentMessages") || "{}");
+    const userMsgs = all[user.email] || {};
+    const mentorEmail = getAssignedMentor();
+
+    if (mentorEmail && userMsgs[mentorEmail]) {
+      setMessageCount(userMsgs[mentorEmail].length);
+    }
   }, [user]);
+
+  // find assigned mentor 
+  const getAssignedMentor = () => {
+    const all = JSON.parse(localStorage.getItem("users") || "[]");
+    const me = all.find((u) => u.email === user.email);
+    return me?.mentor || null;
+  };
 
   return (
     <div className="dashboard-container">
+      
       {/* Sidebar */}
       <div className="sidebar">
         <div className="sidebar-header">
@@ -43,43 +59,25 @@ export default function StudentDashboard() {
         </div>
 
         <a className="sidebar-link" href="/student">📊 Dashboard</a>
-
         <a className="sidebar-link" href="/student/forms">📝 Available Forms</a>
-
-        <a className="sidebar-link" href="/student/submissions">
-          📁 My Submissions
-        </a>
-
+        <a className="sidebar-link" href="/student/submissions">📁 My Submissions</a>
         <a className="sidebar-link" href="/student/marks">📚 Semester Marks</a>
 
-        {/* Messages with unread badge */}
         <a className="sidebar-link" href="/student/messages">
-          💬 Messages
-          {unread > 0 && (
-            <span className="notif-badge">{unread}</span>
-          )}
+          💬 Messages 
+          {messageCount > 0 && <span className="notif-badge">{messageCount}</span>}
         </a>
 
-        {/* Meeting System */}
-        <a className="sidebar-link" href="/student/meeting-request">
-          📅 Request Meeting
-        </a>
-
-        <a className="sidebar-link" href="/student/meetings">
-          📋 Meeting Status
-        </a>
+        <a className="sidebar-link" href="/student/meeting-request">📅 Meeting Form</a>
+        <a className="sidebar-link" href="/student/meetings">📋 Meeting Status</a>
 
         <a className="sidebar-link" href="/student/profile">👤 Profile</a>
 
-        <button className="logout-btn" onClick={logout}>
-          🚪 Logout
-        </button>
+        <button className="logout-btn" onClick={logout}>🚪 Logout</button>
       </div>
 
       {/* Main Section */}
       <div className="main-section">
-
-        {/* Top Navbar */}
         <div className="top-navbar">
           <div className="top-navbar-left">
             <h2>Welcome, {user?.name}</h2>
@@ -95,20 +93,18 @@ export default function StudentDashboard() {
         <h1 className="page-title">Student Dashboard</h1>
 
         <div className="card-grid">
-          {/* Meeting Status Card */}
+
           <div
             className="dashboard-card"
             style={{
-              borderTop: meetingPending
-                ? "4px solid #ff4d4d"
-                : "4px solid #28a745",
+              borderTop: meetingPending ? "4px solid #ff4d4d" : "4px solid #28a745",
             }}
           >
             <h2>📅 Monthly Mentor Meeting</h2>
             <p>
               {meetingPending
-                ? "Your monthly mentor meeting is pending. Please meet your mentor."
-                : "You have completed your mentor meeting for this month."}
+                ? "Your monthly mentor meeting is pending. Please complete it."
+                : "Your mentor meeting for this month is approved!"}
             </p>
             <a href="/student/meetings" className="card-btn">View</a>
           </div>
@@ -142,6 +138,7 @@ export default function StudentDashboard() {
             <p>Manage your personal and academic information.</p>
             <a href="/student/profile" className="card-btn">Open</a>
           </div>
+
         </div>
       </div>
     </div>

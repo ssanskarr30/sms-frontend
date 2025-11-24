@@ -6,92 +6,53 @@ export default function MentorMessages() {
   const { user } = useContext(AuthContext);
 
   const [assignedStudents, setAssignedStudents] = useState([]);
-  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [selected, setSelected] = useState(null);
   const [chat, setChat] = useState([]);
-  const [message, setMessage] = useState("");
+  const [msg, setMsg] = useState("");
 
-  const STORAGE_KEY = "studentMessages";
+  const STORAGE = "studentMessages";
 
-  /* -------------------------------------------------------
-     LOAD ASSIGNED STUDENTS (MENTOR STORED BY EMAIL)
-  ------------------------------------------------------- */
   useEffect(() => {
-    const allUsers = JSON.parse(localStorage.getItem("users") || "[]");
+    const all = JSON.parse(localStorage.getItem("users") || "[]");
 
-    const students = allUsers.filter(
-      (u) => u.role === "student" && u.mentor === user.name // ✅ FIXED HERE
+    setAssignedStudents(
+      all.filter((u) => u.role === "student" && u.mentorEmail === user.email)
     );
-
-    setAssignedStudents(students);
   }, [user.email]);
 
-  /* -------------------------------------------------------
-     OPEN CHAT WITH A STUDENT
-  ------------------------------------------------------- */
   const openChat = (student) => {
-    setSelectedStudent(student);
+    setSelected(student);
 
-    const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    const history = all[student.email] || [];
-    setChat(history);
+    const db = JSON.parse(localStorage.getItem(STORAGE) || "{}");
+
+    const studentChats = db[student.email] || {};
+    const mentorChats = studentChats[user.email] || [];
+
+    setChat(mentorChats);
+
+    localStorage.setItem(`mentorUnread_${user.email}`, "0");
   };
 
-  /* -------------------------------------------------------
-     SEND MESSAGE TO ONE STUDENT
-  ------------------------------------------------------- */
   const sendMessage = () => {
-    if (!selectedStudent || message.trim() === "") return;
+    if (!selected || msg.trim() === "") return;
 
     const newMsg = {
       from: "mentor",
-      text: message,
+      text: msg,
       time: new Date().toLocaleString(),
     };
 
-    const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    const updated = [...(all[selectedStudent.email] || []), newMsg];
+    const db = JSON.parse(localStorage.getItem(STORAGE) || "{}");
 
-    all[selectedStudent.email] = updated;
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
+    if (!db[selected.email]) db[selected.email] = {};
+    if (!db[selected.email][user.email]) db[selected.email][user.email] = [];
 
-    // 🚨 Add unread notification for student
-    const unreadKey = `unread_${selectedStudent.email}`;
-    const count = parseInt(localStorage.getItem(unreadKey) || "0");
-    localStorage.setItem(unreadKey, count + 1);
+    db[selected.email][user.email].push(newMsg);
 
-    setChat(updated);
-    setMessage("");
-  };
+    localStorage.setItem(STORAGE, JSON.stringify(db));
 
-  /* -------------------------------------------------------
-     BROADCAST MESSAGE TO ALL ASSIGNED STUDENTS
-  ------------------------------------------------------- */
-  const broadcastToAll = () => {
-    if (message.trim() === "") return;
-
-    const all = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-
-    assignedStudents.forEach((student) => {
-      const prev = all[student.email] || [];
-
-      const msg = {
-        from: "mentor",
-        text: message,
-        time: new Date().toLocaleString(),
-      };
-
-      all[student.email] = [...prev, msg];
-
-      // 🚨 add unread for each student
-      const unreadKey = `unread_${student.email}`;
-      const count = parseInt(localStorage.getItem(unreadKey) || "0");
-      localStorage.setItem(unreadKey, count + 1);
-    });
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(all));
-
-    alert("Message sent to all assigned students.");
-    setMessage("");
+    setChat([...chat, newMsg]);
+    setMsg("");
   };
 
   return (
@@ -99,7 +60,6 @@ export default function MentorMessages() {
       <h1 className="page-title">Messages</h1>
 
       <div className="chat-layout">
-        {/* LEFT SIDEBAR – STUDENT LIST */}
         <div className="chat-sidebar">
           <h3>Assigned Students</h3>
 
@@ -109,7 +69,7 @@ export default function MentorMessages() {
             <div
               key={s.email}
               className={`chat-student ${
-                selectedStudent?.email === s.email ? "active" : ""
+                selected?.email === s.email ? "active" : ""
               }`}
               onClick={() => openChat(s)}
             >
@@ -118,25 +78,17 @@ export default function MentorMessages() {
           ))}
         </div>
 
-        {/* RIGHT CHAT WINDOW */}
         <div className="chat-window">
-          {!selectedStudent ? (
-            <p>Select a student to open chat.</p>
+          {!selected ? (
+            <p>Select a student to view chat.</p>
           ) : (
             <>
-              <h3>Chat with {selectedStudent.name}</h3>
+              <h3>Chat with {selected.name}</h3>
 
               <div className="message-container">
                 {chat.map((m, i) => (
-                  <div
-                    key={i}
-                    className={`message-card ${
-                      m.from === "mentor" ? "me-msg" : ""
-                    }`}
-                  >
-                    <div className="message-from">
-                      {m.from === "mentor" ? "You" : selectedStudent.name}
-                    </div>
+                  <div key={i} className={`message-card ${m.from === "mentor" ? "me-msg" : ""}`}>
+                    <div className="message-from">{m.from === "mentor" ? "You" : selected.name}</div>
                     <div className="message-text">{m.text}</div>
                     <div className="message-time">{m.time}</div>
                   </div>
@@ -146,22 +98,12 @@ export default function MentorMessages() {
               <textarea
                 className="form-input"
                 rows={3}
-                placeholder="Type your message…"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                placeholder="Write message…"
+                value={msg}
+                onChange={(e) => setMsg(e.target.value)}
               ></textarea>
 
-              <button className="submit-btn" onClick={sendMessage}>
-                Send Message
-              </button>
-
-              <button
-                className="submit-btn"
-                style={{ background: "#1c3fa8", marginTop: "10px" }}
-                onClick={broadcastToAll}
-              >
-                Broadcast to All Students
-              </button>
+              <button className="submit-btn" onClick={sendMessage}>Send</button>
             </>
           )}
         </div>

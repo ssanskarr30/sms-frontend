@@ -15,25 +15,41 @@ export default function AssignMentor() {
     setStudents(
       all
         .filter((u) => u.role === "student")
-        .map((u) => ({ ...u, mentor: u.mentor || "Not Assigned" }))
+        .map((u) => ({
+          ...u,
+          mentor: u.mentor || "Not Assigned",
+          mentorEmail: u.mentorEmail || "",
+        }))
     );
 
     setMentors(all.filter((u) => u.role === "faculty"));
   }, []);
 
-  const assignMentor = (email, mentor) => {
+  // FIXED — stores mentorName + mentorEmail
+  const assignMentor = (studentEmail, mentorName, mentorEmail) => {
     let all = JSON.parse(localStorage.getItem("users") || "[]");
 
     all = all.map((u) =>
-      u.email === email ? { ...u, mentor } : u
+      u.email === studentEmail
+        ? {
+            ...u,
+            mentor: mentorName,
+            mentorEmail: mentorEmail,
+          }
+        : u
     );
 
     localStorage.setItem("users", JSON.stringify(all));
 
+    // Update UI
     setStudents(
       all
         .filter((u) => u.role === "student")
-        .map((u) => ({ ...u, mentor: u.mentor || "Not Assigned" }))
+        .map((u) => ({
+          ...u,
+          mentor: u.mentor || "Not Assigned",
+          mentorEmail: u.mentorEmail || "",
+        }))
     );
 
     alert("Mentor assigned successfully.");
@@ -45,7 +61,6 @@ export default function AssignMentor() {
 
   return (
     <div className="dashboard-container">
-
       {/* Sidebar */}
       <div className="sidebar">
         <div className="sidebar-header">
@@ -55,12 +70,12 @@ export default function AssignMentor() {
         <a className="sidebar-link" href="/hod">📊 Dashboard</a>
         <a className="sidebar-link active" href="/hod/assign-mentor">👨‍🏫 Assign Mentors</a>
         <a className="sidebar-link" href="/student/submissions">📁 View Submissions</a>
+
+        <button className="logout-btn" onClick={logout}>🚪 Logout</button>
       </div>
 
       {/* Main Section */}
       <div className="main-section">
-
-        {/* Top Navbar */}
         <div className="top-navbar">
           <div className="top-navbar-left">
             <h2>Welcome, {user?.name}</h2>
@@ -72,9 +87,7 @@ export default function AssignMentor() {
 
         <h1 className="page-title">Assign Mentors</h1>
 
-        {/* White Card */}
         <div className="card-container">
-
           {/* Search */}
           <div className="table-header">
             <input
@@ -131,7 +144,7 @@ export default function AssignMentor() {
                         style={{ padding: "6px" }}
                       >
                         {mentors.map((m) => (
-                          <option key={m.email} value={m.email}>
+                          <option key={m.email} value={`${m.name}|${m.email}`}>
                             {m.name}
                           </option>
                         ))}
@@ -142,9 +155,11 @@ export default function AssignMentor() {
                       <button
                         className="table-btn"
                         onClick={() => {
-                          const selected =
-                            document.getElementById(`mentor-${i}`).value;
-                          assignMentor(s.email, selected);
+                          const [mentorName, mentorEmail] = document
+                            .getElementById(`mentor-${i}`)
+                            .value.split("|");
+
+                          assignMentor(s.email, mentorName, mentorEmail);
                         }}
                       >
                         Assign
@@ -155,7 +170,6 @@ export default function AssignMentor() {
               )}
             </tbody>
           </table>
-
         </div>
       </div>
     </div>
