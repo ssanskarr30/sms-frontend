@@ -1,0 +1,8 @@
+.submissions-container { max-width:980px;margin:30px auto; }
+.sub-row { display:flex;justify-content:space-between;align-items:center;padding:14px;background:#fff;border-radius:10px;margin-bottom:10px;border:1px solid #eef5ff;box-shadow:0 6px 20px rgba(8,30,80,0.03); }
+.status-pill { padding:6px 10px;border-radius:999px;font-weight:700;font-size:13px; }
+.status-submitted { background:#fff8e6;color:#a67c00;border:1px solid #f3e3b0; }
+.status-verified { background:#eff6ff;color:#0b63d6;border:1px solid #dfeeff; }
+.status-approved { background:#e9fff0;color:#0b8a4e;border:1px solid #dff3e4; }
+.status-rejected { background:#ffece8;color:#b72b2b;border:1px solid #ffd2cf; }
+.empty { padding:24px;text-align:center;color:#666;background:#fff;border-radius:10px;border:1px dashed #e6eefc; }

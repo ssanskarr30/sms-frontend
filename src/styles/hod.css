@@ -1,0 +1,9 @@
+/* src/styles/hod.css */
+.hod-wrap{max-width:1200px;margin:30px auto;background:#fff;padding:16px;border-radius:10px;border:1px solid #eef5ff}
+.hod-grid{display:flex;gap:18px}
+.students-card{flex:1;padding:12px;border-right:1px solid #f2f8ff}
+.map-card{width:360px;padding:12px}
+.student-row{display:flex;justify-content:space-between;align-items:center;padding:8px;border-bottom:1px solid #f2f8ff}
+.muted{font-size:13px;color:#666}
+.map-row{padding:8px;border-bottom:1px solid #f2f8ff}
+.empty{color:#666;padding:12px}

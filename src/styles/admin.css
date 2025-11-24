@@ -1,0 +1,6 @@
+.admin-wrap { max-width:1200px;margin:30px auto;display:grid;grid-template-columns:1fr 420px;gap:20px;font-family:Arial; }
+.users-panel, .approvals-panel { background:#fff;padding:16px;border-radius:10px;border:1px solid #eef5ff; }
+.user-row { display:flex;justify-content:space-between;padding:10px;border-radius:8px;border-bottom:1px solid #f2f8ff;align-items:center; }
+.user-actions button { margin-left:8px;padding:8px 10px;border-radius:8px;border:none;cursor:pointer; }
+.btn-edit { background:#f0f6ff;border:1px solid #d8e8ff;color:#163f8f; }
+.btn-deactivate { background:#ff6b6b;color:#fff; }

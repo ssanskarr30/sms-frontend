@@ -1,0 +1,11 @@
+/* src/styles/messages.css */
+.messages-wrap{max-width:1000px;margin:30px auto;display:flex;gap:18px}
+.compose{flex:1;background:#fff;padding:14px;border-radius:10px;border:1px solid #eef5ff}
+.inbox{flex:1;background:#fff;padding:14px;border-radius:10px;border:1px solid #eef5ff}
+.compose select, .compose textarea{width:100%;padding:8px;border-radius:6px;border:1px solid #e6eefc;margin-bottom:8px}
+.primary{background:#1a4db3;color:#fff;padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+.msg{padding:10px;border-radius:8px;margin-bottom:8px}
+.msg .meta{font-size:12px;color:#666;margin-bottom:6px}
+.msg.incoming{background:#f8fbff;border:1px solid #dceeff}
+.msg.outgoing{background:#f0fff4;border:1px solid #dff3e4}
+.empty{color:#666;padding:12px}

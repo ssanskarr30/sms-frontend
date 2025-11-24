@@ -1,0 +1,114 @@
+/* ==== PAGE BACKGROUND ==== */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #d9e6ff, #a7c3ff);
+    height: 100%;
+  }
+  
+  /* ==== CENTER BOX ==== */
+  .login-container {
+    width: 380px;
+    margin: 80px auto;
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 18px;
+    box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* ==== HEADING ==== */
+  .login-title {
+    text-align: center;
+    font-size: 26px;
+    color: #1a4db3;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .login-subtitle {
+    text-align: center;
+    color: #555;
+    margin-bottom: 20px;
+  }
+  
+  /* ==== INPUT FIELDS ==== */
+  .input-box {
+    margin-bottom: 20px;
+  }
+  
+  .input-label {
+    display: block;
+    margin-bottom: 6px;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .input-field {
+    width: 100%;
+    padding: 12px 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    outline: none;
+    font-size: 15px;
+  }
+  
+  .input-field:focus {
+    border-color: #1a4db3;
+    box-shadow: 0 0 4px #1a4db3;
+  }
+  
+  /* ==== CHECKBOX ==== */
+  .options-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #444;
+    margin-bottom: 15px;
+  }
+  
+  .forgot-link {
+    color: #1a4db3;
+    text-decoration: none;
+  }
+  
+  /* ==== BUTTON ==== */
+  .login-btn {
+    width: 100%;
+    padding: 12px;
+    background: #1a4db3;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  .login-btn:hover {
+    background: #163f8f;
+  }
+  
+  /* ==== SIGN UP LINK ==== */
+  .sign-up-text {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 14px;
+  }
+  
+  .sign-up-text a {
+    color: #1a4db3;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  
+  /* ==== ERROR BOX ==== */
+  .error-box {
+    background: #ffdada;
+    padding: 10px;
+    border-radius: 8px;
+    color: #d80000;
+    margin-bottom: 15px;
+    border: 1px solid #ffb1b1;
+  }
+  

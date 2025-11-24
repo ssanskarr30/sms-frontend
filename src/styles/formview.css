@@ -1,0 +1,10 @@
+.formview-container { max-width:900px;margin:30px auto;background:#fff;padding:22px;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.04); }
+.formview-title { color:#1a4db3;font-weight:700;font-size:18px;margin-bottom:10px; }
+.form-field { margin-bottom:14px; }
+.form-label { display:block;font-weight:600;margin-bottom:6px; }
+.form-input, .form-textarea, .form-select { width:100%;padding:10px;border:1px solid #e6eefc;border-radius:8px; }
+.form-file { padding:8px; border-radius:8px; background:#f8fbff;border:1px dashed #dceeff; }
+.form-actions { margin-top:12px; display:flex; gap:10px; }
+.btn-primary { background:#1a4db3;color:#fff;padding:10px 14px;border-radius:8px;border:none;cursor:pointer; }
+.btn-secondary { background:#f0f6ff;border:1px solid #d8e8ff;color:#163f8f;padding:10px 14px;border-radius:8px;cursor:pointer; }
+.success-box { background:#e6ffef;border:1px solid #c9f6dd;padding:10px;border-radius:8px;color:#0b8a4e;margin-bottom:12px; }

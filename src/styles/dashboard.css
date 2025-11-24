@@ -1,0 +1,328 @@
+/* CONTAINER */
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  background: #f5f7fc;
+  font-family: Inter, system-ui, sans-serif;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 240px;
+  background: #ffffff;
+  border-right: 1px solid #e0e6f1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 15px;
+  box-shadow: 2px 0 8px rgba(0,0,0,0.05);
+}
+
+.sidebar-header {
+  padding: 10px 0 20px;
+  border-bottom: 1px solid #eef2fa;
+  margin-bottom: 15px;
+}
+
+.sidebar-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a4db3;
+}
+
+.sidebar-link {
+  padding: 12px 14px;
+  font-size: 15px;
+  color: #334a6b;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: 0.2s;
+}
+
+.sidebar-link:hover {
+  background: #eef4ff;
+  color: #1a4db3;
+}
+
+.sidebar-link.active {
+  background: #1a4db3;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* MAIN SECTION */
+.main-section {
+  flex: 1;
+  padding: 25px;
+}
+
+/* TOP NAVBAR */
+.top-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #dbe4f3;
+}
+
+.top-navbar-left h2 {
+  margin: 0;
+  font-size: 22px;
+  color: #1a4db3;
+}
+
+.logout-btn {
+  padding: 8px 16px;
+  background: #ff4d4d;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.logout-btn:hover {
+  background: #e03333;
+}
+
+/* PAGE TITLE */
+.page-title {
+  margin-top: 20px;
+  font-size: 26px;
+  color: #1a4db3;
+  font-weight: 700;
+}
+
+/* CARDS GRID */
+.card-grid {
+  margin-top: 25px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+/* CARD */
+.dashboard-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transition: 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+}
+
+.dashboard-card h2 {
+  margin-bottom: 10px;
+  color: #1a4db3;
+}
+
+.dashboard-card p {
+  color: #56657a;
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+/* BUTTON ON CARD */
+.card-btn {
+  padding: 10px;
+  text-align: center;
+  background: #1a4db3;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.card-btn:hover {
+  background: #113b88;
+}
+
+/* CARD CONTAINER FOR TABLE PAGES */
+.card-container {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+  margin-top: 20px;
+}
+
+/* CLEANER TABLE LAYOUT */
+.full-width-table {
+  width: 100%;
+  border-spacing: 0 8px;
+}
+
+.full-width-table thead tr th {
+  background: #f0f4ff;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #1a3f7a;
+}
+
+.smooth-row {
+  background: #ffffff;
+  transition: 0.25s;
+  border-radius: 10px;
+}
+
+.smooth-row:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.smooth-row td {
+  padding: 14px;
+  border-bottom: none;
+}
+
+.empty-row {
+  text-align: center;
+  padding: 25px !important;
+  font-size: 16px;
+  color: #666;
+}
+
+/* ROLE BADGES */
+.role-student {
+  background: #d9eaff;
+  color: #0054d1;
+}
+
+.role-faculty {
+  background: #ffeccc;
+  color: #b36800;
+}
+
+.role-hod {
+  background: #eaffd9;
+  color: #4a7c00;
+}
+
+.role-admin {
+  background: #ffd9d9;
+  color: #c90000;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* DELETE BUTTON */
+.btn-delete {
+  padding: 8px 16px;
+  background: #ff5c5c;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-delete:hover {
+  background: #d93636;
+}
+
+/* Notification pill for counts (messages, pending, etc.) */
+.badge-pill {
+  display: inline-block;
+  min-width: 18px;
+  padding: 2px 6px;
+  margin-left: 6px;
+  border-radius: 999px;
+  background: #ff4d4d;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.sidebar button.logout-btn {
+  margin-top: auto;
+  width: 100%;
+  background: #ff4d4d;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.sidebar button.logout-btn:hover {
+  background: #d93636;
+}
+
+/* orange badge for pending */
+.badge-orange {
+  background: #fff4e0;
+  color: #b36b00;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
+/* basic card button if missing */
+.card-btn { padding:8px 12px; background:#1a4db3; color:#fff; border:none; border-radius:8px; text-decoration:none; display:inline-block; }
+.btn-delete { padding:8px 12px; background:#ff5c5c; color:#fff; border:none; border-radius:8px; cursor:pointer; }
+.table-btn { padding:6px 10px; background:#eef3ff; border-radius:8px; border:none; cursor:pointer; color:#113b88; }
+
+
+.chat-layout {
+  display: flex;
+  margin-top: 20px;
+}
+
+.chat-sidebar {
+  width: 220px;
+  background: #fff;
+  padding: 15px;
+  border-right: 1px solid #e8e8e8;
+  height: 70vh;
+  overflow-y: auto;
+}
+
+.chat-student {
+  padding: 10px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #f6f8ff;
+}
+
+.chat-student:hover {
+  background: #e5ebff;
+}
+
+.chat-student.active {
+  background: #1a4db3;
+  color: white;
+}
+
+.chat-window {
+  flex: 1;
+  padding: 20px;
+}
+
+.notif-badge {
+  display: inline-block;
+  background: red;
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  margin-left: 8px;
+}
+
