@@ -4,55 +4,61 @@ import { AuthContext } from "../../context/AuthContext";
 
 export default function StudentMeetingForm() {
   const { user } = useContext(AuthContext);
+
   const [note, setNote] = useState("");
+  const [meetingDate, setMeetingDate] = useState("");
+
   const [mentorName, setMentorName] = useState("");
   const [mentorEmail, setMentorEmail] = useState("");
 
+  // Load mentor information
   useEffect(() => {
-    // load assigned mentor from users list
     const all = JSON.parse(localStorage.getItem("users") || "[]");
-    const student = all.find((u) => u.email === user.email);
+    const me = all.find((u) => u.email === user.email);
 
-    if (student) {
-      setMentorName(student.mentorName || "Not Assigned");
-      setMentorEmail(student.mentorEmail || null);
+    if (me) {
+      setMentorName(me.mentorName || "Not Assigned");
+      setMentorEmail(me.mentorEmail || null);
     }
   }, [user.email]);
 
   const submitMeeting = () => {
-    if (note.trim() === "") {
-      alert("Please enter meeting details.");
-      return;
-    }
     if (!mentorEmail) {
       alert("No mentor assigned.");
       return;
     }
+    if (meetingDate.trim() === "") {
+      alert("Please select meeting date.");
+      return;
+    }
+    if (note.trim() === "") {
+      alert("Please enter meeting discussion details.");
+      return;
+    }
 
-    const now = new Date();
-
+    const selectedDate = new Date(meetingDate);
     const entry = {
       id: Date.now(),
       studentEmail: user.email,
       studentName: user.name,
       mentorEmail: mentorEmail,
       mentorName: mentorName,
-      month: now.getMonth(),
-      year: now.getFullYear(),
-      date: now.toISOString(),
+      date: meetingDate, // meeting completed date
+      month: selectedDate.getMonth(),
+      year: selectedDate.getFullYear(),
       note: note.trim(),
       status: "pending",
     };
 
     const logs = JSON.parse(localStorage.getItem("meetingLogs") || "[]");
 
-    // Remove older log for same month
+    // Remove old meeting for this month
     const filtered = logs.filter(
-      (l) =>
+      (m) =>
         !(
-          l.studentEmail === user.email &&
-          l.month === entry.month &&
-          l.year === entry.year
+          m.studentEmail === user.email &&
+          m.month === entry.month &&
+          m.year === entry.year
         )
     );
 
@@ -61,8 +67,9 @@ export default function StudentMeetingForm() {
       JSON.stringify([entry, ...filtered])
     );
 
-    alert("Meeting log submitted for approval.");
+    alert("Meeting log submitted to mentor for approval.");
     setNote("");
+    setMeetingDate("");
   };
 
   return (
@@ -71,7 +78,7 @@ export default function StudentMeetingForm() {
 
       <div className="form-card">
 
-        {/* NEW — SHOW MENTOR NAME */}
+        {/* Mentor Name */}
         <div className="input-row">
           <label className="form-label">Your Mentor</label>
           <input
@@ -81,13 +88,28 @@ export default function StudentMeetingForm() {
           />
         </div>
 
-        <label className="form-label">Describe what was discussed</label>
-        <textarea
-          className="form-input"
-          rows={4}
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-        ></textarea>
+        {/* Meeting Date */}
+        <div className="input-row">
+          <label className="form-label">Meeting Date</label>
+          <input
+            type="date"
+            className="form-input"
+            value={meetingDate}
+            onChange={(e) => setMeetingDate(e.target.value)}
+          />
+        </div>
+
+        {/* Notes */}
+        <div className="input-row">
+          <label className="form-label">What was discussed?</label>
+          <textarea
+            className="form-input"
+            rows={4}
+            placeholder="Write meeting discussion details..."
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+          ></textarea>
+        </div>
 
         <button className="submit-btn" onClick={submitMeeting}>
           Submit Meeting Log
