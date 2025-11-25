@@ -8,24 +8,28 @@ export default function AssignMentor() {
   const [mentors, setMentors] = useState([]);
   const [search, setSearch] = useState("");
 
-  // Load students + mentors
+  // Load all users (students + faculty)
   useEffect(() => {
     const all = JSON.parse(localStorage.getItem("users") || "[]");
 
+    // Students
     setStudents(
       all
         .filter((u) => u.role === "student")
         .map((u) => ({
           ...u,
-          mentor: u.mentor || "Not Assigned",
+          mentorName: u.mentorName || "Not Assigned",
           mentorEmail: u.mentorEmail || "",
         }))
     );
 
-    setMentors(all.filter((u) => u.role === "faculty"));
+    // Mentors (faculty)
+    setMentors(
+      all.filter((u) => u.role === "faculty")
+    );
   }, []);
 
-  // FIXED — stores mentorName + mentorEmail
+  // FIXED — now correctly stores BOTH mentorName + mentorEmail
   const assignMentor = (studentEmail, mentorName, mentorEmail) => {
     let all = JSON.parse(localStorage.getItem("users") || "[]");
 
@@ -33,7 +37,7 @@ export default function AssignMentor() {
       u.email === studentEmail
         ? {
             ...u,
-            mentor: mentorName,
+            mentorName: mentorName,
             mentorEmail: mentorEmail,
           }
         : u
@@ -41,13 +45,13 @@ export default function AssignMentor() {
 
     localStorage.setItem("users", JSON.stringify(all));
 
-    // Update UI
+    // Update table UI
     setStudents(
       all
         .filter((u) => u.role === "student")
         .map((u) => ({
           ...u,
-          mentor: u.mentor || "Not Assigned",
+          mentorName: u.mentorName || "Not Assigned",
           mentorEmail: u.mentorEmail || "",
         }))
     );
@@ -106,7 +110,7 @@ export default function AssignMentor() {
                 <th>Email</th>
                 <th>Roll No</th>
                 <th>Current Mentor</th>
-                <th>Assign New</th>
+                <th>Assign New Mentor</th>
                 <th>Save</th>
               </tr>
             </thead>
@@ -114,9 +118,7 @@ export default function AssignMentor() {
             <tbody>
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="empty-row">
-                    No students found.
-                  </td>
+                  <td colSpan="6" className="empty-row">No students found.</td>
                 </tr>
               ) : (
                 filtered.map((s, i) => (
@@ -128,12 +130,12 @@ export default function AssignMentor() {
                     <td>
                       <span
                         className={
-                          s.mentor === "Not Assigned"
+                          s.mentorName === "Not Assigned"
                             ? "badge badge-red"
                             : "badge badge-green"
                         }
                       >
-                        {s.mentor}
+                        {s.mentorName}
                       </span>
                     </td>
 
@@ -155,9 +157,8 @@ export default function AssignMentor() {
                       <button
                         className="table-btn"
                         onClick={() => {
-                          const [mentorName, mentorEmail] = document
-                            .getElementById(`mentor-${i}`)
-                            .value.split("|");
+                          const [mentorName, mentorEmail] =
+                            document.getElementById(`mentor-${i}`).value.split("|");
 
                           assignMentor(s.email, mentorName, mentorEmail);
                         }}
@@ -170,6 +171,7 @@ export default function AssignMentor() {
               )}
             </tbody>
           </table>
+
         </div>
       </div>
     </div>
