@@ -8,17 +8,26 @@ export default function StudentDashboard() {
   const [meetingPending, setMeetingPending] = useState(false);
   const [messageCount, setMessageCount] = useState(0);
 
+  // ---------------------------------------------------------
+  // 🔥 FIXED FUNCTION — Get assigned mentor EMAIL correctly
+  // ---------------------------------------------------------
+  const getAssignedMentorEmail = () => {
+    const all = JSON.parse(localStorage.getItem("users") || "[]");
+    const me = all.find((u) => u.email === user.email);
+    return me?.mentorEmail || null;
+  };
+
+  // ---------------------------------------------------------
+  // MAIN EFFECT
+  // ---------------------------------------------------------
   useEffect(() => {
     if (!user) return;
 
     // ---------- CHECK MEETING STATUS (NEW SYSTEM) ----------
     const logs = JSON.parse(localStorage.getItem("meetingLogs") || "[]");
 
-    // get approved meetings for THIS student
     const approved = logs.filter(
-      (m) =>
-        m.studentEmail === user.email &&
-        m.status === "approved"
+      (m) => m.studentEmail === user.email && m.status === "approved"
     );
 
     const now = new Date();
@@ -33,21 +42,18 @@ export default function StudentDashboard() {
     setMeetingPending(!metThisMonth);
 
     // ---------- CHECK MESSAGE COUNT ----------
-    const all = JSON.parse(localStorage.getItem("studentMessages") || "{}");
-    const userMsgs = all[user.email] || {};
-    const mentorEmail = getAssignedMentor();
+    const allMsgs = JSON.parse(localStorage.getItem("studentMessages") || "{}");
 
-    if (mentorEmail && userMsgs[mentorEmail]) {
-      setMessageCount(userMsgs[mentorEmail].length);
+    const mentorEmail = getAssignedMentorEmail(); // fixed
+    const threads = allMsgs[user.email] || {};
+
+    if (mentorEmail && threads[mentorEmail]) {
+      setMessageCount(threads[mentorEmail].length);
+    } else {
+      setMessageCount(0);
     }
-  }, [user]);
 
-  // find assigned mentor 
-  const getAssignedMentor = () => {
-    const all = JSON.parse(localStorage.getItem("users") || "[]");
-    const me = all.find((u) => u.email === user.email);
-    return me?.mentor || null;
-  };
+  }, [user]);
 
   return (
     <div className="dashboard-container">
