@@ -5,36 +5,48 @@ import { AuthContext } from "../../context/AuthContext";
 export default function StudentMeetingForm() {
   const { user } = useContext(AuthContext);
   const [note, setNote] = useState("");
+  const [date, setDate] = useState(""); // NEW DATE STATE
 
   const submitMeeting = () => {
+    if (!date) {
+      alert("Please select the meeting date.");
+      return;
+    }
+
     if (note.trim() === "") {
       alert("Please enter meeting details.");
       return;
     }
 
-    const now = new Date();
+    const selectedDate = new Date(date);
+    const month = selectedDate.getMonth();
+    const year = selectedDate.getFullYear();
 
     const entry = {
       id: Date.now(),
       studentEmail: user.email,
       studentName: user.name,
-      mentorEmail: user.mentor,
-      month: now.getMonth(),
-      year: now.getFullYear(),
-      date: now.toISOString(),
+
+      mentorEmail: user.mentorEmail || user.mentor, // support both
+      mentorName: user.mentorName || user.mentorName,
+
+      date: selectedDate.toISOString(),
+
+      month,
+      year,
       note: note.trim(),
       status: "pending",
     };
 
     const logs = JSON.parse(localStorage.getItem("meetingLogs") || "[]");
 
-    // Remove old request for the same month
+    // Remove any old meeting request of same month
     const filtered = logs.filter(
       (l) =>
         !(
           l.studentEmail === user.email &&
-          l.month === entry.month &&
-          l.year === entry.year
+          l.month === month &&
+          l.year === year
         )
     );
 
@@ -45,6 +57,7 @@ export default function StudentMeetingForm() {
 
     alert("Meeting log submitted for approval.");
     setNote("");
+    setDate("");
   };
 
   return (
@@ -52,7 +65,20 @@ export default function StudentMeetingForm() {
       <h1 className="page-title">Submit Monthly Meeting</h1>
 
       <div className="form-card">
-        <label className="form-label">Describe what was discussed</label>
+
+        {/* DATE FIELD */}
+        <label className="form-label">Select Meeting Date</label>
+        <input
+          type="date"
+          className="form-input"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
+
+        {/* NOTE FIELD */}
+        <label className="form-label" style={{ marginTop: "15px" }}>
+          Describe what was discussed
+        </label>
         <textarea
           className="form-input"
           rows={4}

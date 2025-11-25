@@ -12,27 +12,41 @@ export default function MentorMessages() {
 
   const STORAGE = "studentMessages";
 
+  // Load assigned students correctly
   useEffect(() => {
     const all = JSON.parse(localStorage.getItem("users") || "[]");
 
-    setAssignedStudents(
-      all.filter((u) => u.role === "student" && u.mentorEmail === user.email)
+    const assigned = all.filter(
+      (u) =>
+        u.role === "student" &&
+        (u.mentor === user.email || u.mentorEmail === user.email)
     );
+
+    setAssignedStudents(assigned);
   }, [user.email]);
 
+  // Open chat with a student
   const openChat = (student) => {
     setSelected(student);
 
     const db = JSON.parse(localStorage.getItem(STORAGE) || "{}");
 
-    const studentChats = db[student.email] || {};
-    const mentorChats = studentChats[user.email] || [];
+    if (!db[student.email] || !db[student.email][user.email]) {
+      // no chat exists
+      setChat([]);
+      return;
+    }
 
-    setChat(mentorChats);
+    setChat(db[student.email][user.email]);
 
-    localStorage.setItem(`mentorUnread_${user.email}`, "0");
+    // Clear unread
+    const unreadKey = `mentorUnread_${user.email}`;
+    const unreadData = JSON.parse(localStorage.getItem(unreadKey) || "{}");
+    unreadData[student.email] = 0;
+    localStorage.setItem(unreadKey, JSON.stringify(unreadData));
   };
 
+  // Send message to student
   const sendMessage = () => {
     if (!selected || msg.trim() === "") return;
 
@@ -51,7 +65,7 @@ export default function MentorMessages() {
 
     localStorage.setItem(STORAGE, JSON.stringify(db));
 
-    setChat([...chat, newMsg]);
+    setChat([...db[selected.email][user.email]]);
     setMsg("");
   };
 
@@ -60,6 +74,8 @@ export default function MentorMessages() {
       <h1 className="page-title">Messages</h1>
 
       <div className="chat-layout">
+
+        {/* Side Student List */}
         <div className="chat-sidebar">
           <h3>Assigned Students</h3>
 
@@ -78,6 +94,7 @@ export default function MentorMessages() {
           ))}
         </div>
 
+        {/* Chat Window */}
         <div className="chat-window">
           {!selected ? (
             <p>Select a student to view chat.</p>
@@ -86,9 +103,20 @@ export default function MentorMessages() {
               <h3>Chat with {selected.name}</h3>
 
               <div className="message-container">
+                {chat.length === 0 && (
+                  <div className="empty">No messages yet.</div>
+                )}
+
                 {chat.map((m, i) => (
-                  <div key={i} className={`message-card ${m.from === "mentor" ? "me-msg" : ""}`}>
-                    <div className="message-from">{m.from === "mentor" ? "You" : selected.name}</div>
+                  <div
+                    key={i}
+                    className={`message-card ${
+                      m.from === "mentor" ? "me-msg" : ""
+                    }`}
+                  >
+                    <div className="message-from">
+                      {m.from === "mentor" ? "You" : selected.name}
+                    </div>
                     <div className="message-text">{m.text}</div>
                     <div className="message-time">{m.time}</div>
                   </div>
@@ -103,7 +131,9 @@ export default function MentorMessages() {
                 onChange={(e) => setMsg(e.target.value)}
               ></textarea>
 
-              <button className="submit-btn" onClick={sendMessage}>Send</button>
+              <button className="submit-btn" onClick={sendMessage}>
+                Send
+              </button>
             </>
           )}
         </div>

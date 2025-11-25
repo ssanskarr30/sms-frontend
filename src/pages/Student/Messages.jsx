@@ -3,29 +3,33 @@ import { AuthContext } from "../../context/AuthContext";
 import { useContext, useEffect, useState } from "react";
 
 /*
-  Student messages are stored per mentorName.
-  When student sends, increment mentor unread map under mentorName.
+  FIXED VERSION:
+  Messages stored under studentMessages[student.email][mentor.email]
 */
 
 export default function StudentMessages() {
   const { user } = useContext(AuthContext);
   const [messages, setMessages] = useState([]);
   const [reply, setReply] = useState("");
-  const [mentorName, setMentorName] = useState(null);
+  const [mentorEmail, setMentorEmail] = useState(null);
+  const STORAGE = "studentMessages";
 
   useEffect(() => {
     if (!user) return;
+
     const all = JSON.parse(localStorage.getItem("users") || "[]");
     const me = all.find((u) => u.email === user.email) || user;
-    setMentorName(me.mentor || null);
 
-    const store = JSON.parse(localStorage.getItem("studentMessages") || "{}");
-    const msgs = (store[user.email] && store[user.email][me.mentor]) || [];
+    // mentor stored as email ALWAYS
+    setMentorEmail(me.mentor || null);
+
+    const db = JSON.parse(localStorage.getItem(STORAGE) || "{}");
+    const msgs = (db[user.email] && db[user.email][me.mentor]) || [];
     setMessages(msgs);
   }, [user?.email]);
 
-  function sendReply() {
-    if (!mentorName) {
+  const sendReply = () => {
+    if (!mentorEmail) {
       alert("No mentor assigned.");
       return;
     }
@@ -37,20 +41,23 @@ export default function StudentMessages() {
       time: new Date().toLocaleString(),
     };
 
-    const all = JSON.parse(localStorage.getItem("studentMessages") || "{}");
-    all[user.email] = all[user.email] || {};
-    all[user.email][mentorName] = all[user.email][mentorName] || [];
-    all[user.email][mentorName].push(newMsg);
-    localStorage.setItem("studentMessages", JSON.stringify(all));
-    setMessages([...all[user.email][mentorName]]);
+    const db = JSON.parse(localStorage.getItem(STORAGE) || "{}");
+
+    if (!db[user.email]) db[user.email] = {};
+    if (!db[user.email][mentorEmail]) db[user.email][mentorEmail] = [];
+
+    db[user.email][mentorEmail].push(newMsg);
+
+    localStorage.setItem(STORAGE, JSON.stringify(db));
+    setMessages([...db[user.email][mentorEmail]]);
     setReply("");
 
-    // increment mentor unread counter
-    const key = `mentorUnread_${mentorName}`;
-    const cur = JSON.parse(localStorage.getItem(key) || "{}");
-    cur[user.email] = (cur[user.email] || 0) + 1;
-    localStorage.setItem(key, JSON.stringify(cur));
-  }
+    // Increase mentor unread
+    const unreadKey = `mentorUnread_${mentorEmail}`;
+    const old = JSON.parse(localStorage.getItem(unreadKey) || "{}");
+    old[user.email] = (old[user.email] || 0) + 1;
+    localStorage.setItem(unreadKey, JSON.stringify(old));
+  };
 
   return (
     <div className="main-section">
@@ -69,18 +76,17 @@ export default function StudentMessages() {
       </div>
 
       <div className="form-card" style={{ marginTop: 20 }}>
-        <h3 style={{ marginBottom: 10 }}>Send a Message to Mentor</h3>
+        <h3>Send a Message</h3>
 
         <textarea
           className="form-input"
           rows={4}
-          placeholder={mentorName ? "Write your message..." : "No mentor assigned."}
+          placeholder="Write..."
           value={reply}
           onChange={(e) => setReply(e.target.value)}
-          disabled={!mentorName}
         />
 
-        <button className="submit-btn" onClick={sendReply} disabled={!mentorName}>
+        <button className="submit-btn" onClick={sendReply}>
           Send
         </button>
       </div>
